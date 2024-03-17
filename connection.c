@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <odbcinst.h>
 
-
 SQLRETURN connToDB(SQLHDBC* dbc) {
 	SQLHENV env;
 
@@ -38,7 +37,7 @@ SQLRETURN connToDB(SQLHDBC* dbc) {
 	/* Connect to the MySQL */
 	ret = SQLDriverConnect(*dbc, 
 							NULL, 
-							(SQLCHAR*)"DSN=MySQL_ssb_1;Server=localhost;UID=root;PSW=town1277;", 
+							(SQLCHAR*)"DSN=mysql_ssb_1;Server=localhost;UID=root;PSW=123465;", 
 							SQL_NTS, 
 							outstr,
 							sizeof(outstr), 
@@ -166,15 +165,21 @@ void GetStringFromDB (SQLHSTMT stmt, SQLCHAR* szData, int i)
 	SQLDescribeCol(stmt, *((SQLSMALLINT*) &i), colName, sizeof(colName),
 			&nameLen, &type, (SQLULEN *) &colSize, &scale, &isNull);
 
+	//test
+	//printf("type = %d\n", type);
+
 	switch (type) {
 	case SQL_CHAR:
-	case SQL_VARCHAR:
-
+	case SQL_VARCHAR: //值为12
 		SQLGetData(stmt, *((SQLUSMALLINT*) &i), SQL_C_DEFAULT, szData, 20,
 				(SQLLEN*)&cbLen);
-
 		break;
-
+	// case SQL_WVARCHAR, updated by lq
+	// ODBC库规定：SQL_WVARCHAR (-9), Wide-character string (UTF-16 or UCS-2)
+	case SQL_WVARCHAR: //值为-9
+		SQLGetData(stmt, *((SQLUSMALLINT*) &i), SQL_C_DEFAULT, szData, 20,
+				(SQLLEN*)&cbLen);
+		break;
 	case SQL_INTEGER:
 	case SQL_SMALLINT:
 		printf("wrong data");

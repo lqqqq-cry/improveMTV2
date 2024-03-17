@@ -562,7 +562,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
    char line[512];
 
-   fin.open("/home/town/tblgen/data_sf_0.01/lineorder.tbl");   //loading lineorder table
+   fin.open("/home/lia/Downloads/ssb-dbgen/lineorder.tbl");   //loading lineorder table
 
     if(!fin)
 		cout <<"Can't open data file ";
@@ -648,7 +648,6 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 	       fin.getline(line,512);
 
 	       count++;   //count present structure tuple array [number]
-
 	       //if(count == 10 ) break;
 
 	    }//while

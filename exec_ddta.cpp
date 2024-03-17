@@ -922,7 +922,7 @@ producePrediction(ddtacontext &context, SQLHDBC& dbc)
 		           // Loop through each record
 		           while((ret = SQLFetch(stmt)) == SQL_SUCCESS) {
 
-
+						
                         GetStringFromDB(stmt, (SQLCHAR*)szData, 1);
 
 
@@ -934,14 +934,14 @@ producePrediction(ddtacontext &context, SQLHDBC& dbc)
 
 						     prediction.push_back(counter);
 
-						     //printf("%s\n", szData);
+						     printf("szData: %s\n", szData);
 						     counter++;
 						}else {//already in the map
 
 						     prediction.push_back(iter->second);
 
-
-						     //cout << iter->first << "<--->" << iter->second << endl;
+							 //test: print triplet
+						     cout << iter->first << "<--->" << iter->second << endl;
 						}
 
 					 }//end while
@@ -1283,7 +1283,16 @@ void exec_cddta_mt(ddtacontext& context, SelectType& selectVar,
 	// GetSystemInfo(&sysInfo);
 
     // int THREAD_NUM = sysInfo.dwNumberOfProcessors - 7;//sysconf(_SC_NPROCESSORS_ONLN);
-	int THREAD_NUM = sysconf(_SC_NPROCESSORS_ONLN) - 7;
+	
+	// Debug: sysconf(_SC_NPROCESSORS_ONLN) = 4, there is an error:
+	// terminate called after throwing an instance of 'std::length_error'
+  	// 	what():  cannot create std::vector larger than max_size()
+	
+	// Program received signal SIGABRT, Aborted.
+	// __pthread_kill_implementation (no_tid=0, signo=6, threadid=140737352230720) at ./nptl/pthread_kill.c:44
+	// cout << "sysconf(_SC_NPROCESSORS_ONLN)" << sysconf(_SC_NPROCESSORS_ONLN) << std::endl;
+	// Therefore change the below code from sysconf(_SC_NPROCESSORS_ONLN) - 7 to sysconf(_SC_NPROCESSORS_ONLN) - 3
+	int THREAD_NUM = sysconf(_SC_NPROCESSORS_ONLN);
 
 	std::vector<thread_args> threads(THREAD_NUM);	//@town: [add] "(THREAD_NUM)"，用于初始化threads向量
 
