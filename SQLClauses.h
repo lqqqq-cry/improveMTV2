@@ -166,7 +166,3 @@ char *pSQL[13]= {		//@town: remove "extern"
 		order by d_year, s_city, p_brand"
 
  };
-
-
-
-
