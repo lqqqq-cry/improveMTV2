@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include "exec_ddta.h"
+#include "RLE.h"
 
 using namespace std;
 
@@ -553,6 +554,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
    short *map = runtimeInfo.posMap;
    int pos;
    long count=0;
+   long count_each_row[9]={0};
 
 
 
@@ -592,13 +594,23 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 			     }
 
 		         *cp='\0';
-
+				 // store values by columns
+				 // lo_custkey 0: 73 73 73 73 73 73 156 246 246 246 
+				 // lo_partkey 1: 1551 673 636 21 240 156 1061 42 190 1284 
+				 // lo_suppkey 2: 8 1 0 9 16 13 10 19 16 14 
+				 // lo_orderdate 3: 1462 1462 1462 1462 1462 1462 1796 652 652 652
+				 // lo_quantity 4: 17 36 8 28 24 32 38 45 49 27 
+				 // lo_extendedprice 5: 2471035 5668812 1230104 2581656 2738976 3382880 3659628 4243680 5346831 3202956
+				 // lo_discount 6: 4 9 10 9 10 7 0 6 10 6
+				 // lo_revenue 7: 2372193 5158618 1107093 2349306 2465078 3146078 3659628 3989059 4812147 3010778
+				 // lo_supplycost 8: 87213 94480 92257 55321 68474 63429 57783 56582 65471 71176
 		         switch(i) {    //set each field value to structure fields
 
-					  case 2:
+					  case 2: //lo_custkey
 						  attrValue =  (atoi(ptr) - 1);
 
 						  LOTable.pLOTable[0][count] = attrValue;
+						  count_each_row[0]+=1;
 
 						  break;
 
@@ -607,6 +619,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 						  attrValue =  (atoi(ptr) - 1);
 
 						  LOTable.pLOTable[1][count] = attrValue;
+						  count_each_row[1]+=1;
 
 						  break;
 
@@ -614,6 +627,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 						  attrValue = (atoi(ptr) - 1);
 
 						  LOTable.pLOTable[2][count] = attrValue;
+						  count_each_row[2]+=1;
 
 						  break;
 
@@ -621,11 +635,12 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 						  attrValue = dataKey2Index(atoi(ptr));
 
 						  LOTable.pLOTable[3][count] =  attrValue;
+						  count_each_row[3]+=1;
 
 						  break;
 
 					  case 8:  case 9:
-					  case 11: case 12: case 13:
+					  case 11: case 12: case 13: //only 7 attributes
 
 						  attrValue = atoi(ptr);
 
@@ -634,6 +649,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 						  pos = map[i];
 
 				          LOTable.pLOTable[pos][count] = (attrValue); //column store
+						  count_each_row[pos]+=1;
 				          break;
 				 }//switch
 
@@ -656,6 +672,31 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
     LOTable.size = count;
     printf(" size = %ld, loading data finished!\n", count);
+
+	printf("Encoding data (RLE)...Now the lineorder table has %d attributes\n", pos);
+
+	// Vector to store encoded data for each row
+    std::vector<std::vector<int>> stored_encoded_data;
+
+    // Process each row of LOTable.pLOTable using run_length_encode
+    for (size_t i = 0; i < pos+1; ++i) {
+        size_t encoded_size_each_row = count_each_row[i];
+        std::vector<int> encoded_data = run_length_encode(LOTable.pLOTable[i], LOTable.size, encoded_size_each_row);
+
+		// Store encoded data
+    	stored_encoded_data.push_back(encoded_data);
+                
+        // Print stored encoded data
+		std::cout << "Stored encoded data for row " << i << ": ";
+		for (int val : stored_encoded_data.back()) {
+			std::cout << val << " ";
+		}
+		std::cout << std::endl;
+		// lo_custkey 0: 73 73 73 73 73 73 156 246 246 246...
+		//73 6 156 1 246 6 273 1 88 3 111 1 78 7 261 6 133 4 123 3 255 6 231 1 172 3 249 1 163 6 64 1 33 3...
+		}
+
+	printf("Encoding data finished!\n");
 	fin.close();
 
 }
