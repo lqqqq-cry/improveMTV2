@@ -17,6 +17,18 @@ typedef struct runtimeInfoType {
 	  short  factTblAttrs[9]; //fact table attributes involved in query
 	  short  posMap[17];
 
+	  
+	
+	
+		// lo_custkey 0
+		// lo_partkey 1
+		// lo_suppkey 2
+		// lo_orderdate 3
+		// lo_quantity 4
+		// lo_extendedprice 5
+		// lo_discount 6
+		// lo_revenue 7
+		// lo_supplycost 8
 
 	  runtimeInfoType ( ) {
 		  posMap[0]  = -1;  posMap[1]  = -1;

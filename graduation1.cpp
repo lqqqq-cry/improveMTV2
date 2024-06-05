@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
 
 			endTime = timerEnd( );
 
-			cout << elapsedTime(startTime, endTime) << " ms. phase 1" << std::endl;
+			cout << "Produce prediction time: " << elapsedTime(startTime, endTime) << " ms. phase 1" << std::endl;
 
 			startTime = timerStart( );
 

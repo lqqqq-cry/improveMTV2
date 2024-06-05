@@ -860,6 +860,7 @@ inline int rearrange(int posInFT)
 }
 
 
+//算法1. tripletProducer.
 void
 producePrediction(ddtacontext &context, SQLHDBC& dbc)
 {
@@ -923,25 +924,25 @@ producePrediction(ddtacontext &context, SQLHDBC& dbc)
 		           while((ret = SQLFetch(stmt)) == SQL_SUCCESS) {
 
 						
-                        GetStringFromDB(stmt, (SQLCHAR*)szData, 1);
+                        GetStringFromDB(stmt, (SQLCHAR*)szData, 1); //get attribute from result set; in Q4.1, attribute is 'c_region'
 
 
 						BOOST_AUTO(iter, bimap.left.find(szData));
 
-						if(iter == bimap.left.end( )) {//not in the map
+						if(iter == bimap.left.end( )) {//not in the map (if attribute not in the hash table)
 
-						     bimap.left.insert(make_pair(szData, counter));
+						     bimap.left.insert(make_pair(szData, counter)); //piar(CANADA,2)
 
-						     prediction.push_back(counter);
+						     prediction.push_back(counter); //push back key into the key vecotor;
 
-						     printf("szData: %s\n", szData);
+						     cout << "szData: " << szData << " counter: " << counter << endl;
 						     counter++;
 						}else {//already in the map
 
-						     prediction.push_back(iter->second);
+						     prediction.push_back(iter->second); //get the key of the attribute; iter->second is key
 
 							 //test: print triplet
-						     cout << iter->first << "<--->" << iter->second << endl;
+						     cout << "<key,value>: <" << iter->first << "," << iter->second << ">" << endl;
 						}
 
 					 }//end while
@@ -1382,13 +1383,3 @@ void exec_cddta_mt(ddtacontext& context, SelectType& selectVar,
      }//if(!selectVar.hasAgg)
 
 }
-
-
-
-
-
-
-
-
-
-
