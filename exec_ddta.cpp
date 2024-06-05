@@ -1383,13 +1383,3 @@ void exec_cddta_mt(ddtacontext& context, SelectType& selectVar,
      }//if(!selectVar.hasAgg)
 
 }
-
-
-
-
-
-
-
-
-
-
