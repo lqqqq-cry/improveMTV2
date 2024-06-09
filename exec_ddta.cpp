@@ -22,6 +22,8 @@
 #include  <x86gprintrin.h>		//@town Feb.2nd: [add]
 //#include  <windows.h>
 
+#include "RLE.h"
+
 extern "C" {
 #include "socketConn.h"
 }
@@ -1109,7 +1111,8 @@ void *exec_cddta_thread(void * arg){
 
 				  int myOrder = rearrange(attrsToGet[k]);
 
-				  fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
+				  //fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
+				  fKey[myOrder] = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);		//拿到外键，对应维表位图或键值对的下标
 
 				  flag = predJudge(*mt_arg->contextptr, fKey[myOrder], attrsToGet[k]);
 
@@ -1148,8 +1151,11 @@ void *exec_cddta_thread(void * arg){
 
 			  //now, get fact table value for aggregation
 			  if(opType != NONE) {
-			 		 f1 = (mt_arg->pFactTable)->pLOTable[ attrsToGet[k]][i];
-			 		 f2 = (mt_arg->pFactTable)->pLOTable[ attrsToGet[k+1]][i];
+			 		//  f1 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+					 f1 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+			 		//  f2 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][i];
+					 f2 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0], i);
+			 		 
 
 			 		// printf(">>%d >>%d \n", f1, f2);
 
@@ -1164,7 +1170,9 @@ void *exec_cddta_thread(void * arg){
 			 		  }
 
 			  }else {
-			 		 factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+			 		//  factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+					factValue = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+			 		
 			  }
 			  nInGrp++;
 			  startCnt = __rdtsc( );
