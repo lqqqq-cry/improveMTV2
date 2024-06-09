@@ -675,29 +675,42 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
 	printf("Encoding data (RLE)...Now the lineorder table has %d attributes\n", pos);
 
-	// Vector to store encoded data for each row
-    std::vector<std::vector<int>> stored_encoded_data;
+	// Open a file to save the encoded data
+    std::ofstream outfile("encoded_data.txt");
 
     // Process each row of LOTable.pLOTable using run_length_encode
     for (size_t i = 0; i < pos+1; ++i) {
         size_t encoded_size_each_row = count_each_row[i];
-        std::vector<int> encoded_data = run_length_encode(LOTable.pLOTable[i], LOTable.size, encoded_size_each_row);
+        int *encoded_data = run_length_encode(LOTable.pLOTable[i], LOTable.size, encoded_size_each_row);
+
+		// Deallocate old data
+        delete[] LOTable.pLOTable[i];
 
 		// Store encoded data
-    	stored_encoded_data.push_back(encoded_data);
+		encoded_size_each_row = encoded_data[0]; // the first element of encoded_data is the size of encoded_data
+        LOTable.pLOTable[i] = new int[encoded_size_each_row];
+        std::copy(encoded_data, encoded_data + encoded_size_each_row, LOTable.pLOTable[i]);
                 
-        // Print stored encoded data
-		std::cout << "Stored encoded data for row " << i << ": ";
-		for (int val : stored_encoded_data.back()) {
-			std::cout << val << " ";
-		}
-		std::cout << std::endl;
+		// Write encoded data to the file
+        outfile << "Stored encoded data for row " << i << ": ";
+        for (size_t j = 0; j < encoded_size_each_row + 1; ++j) {
+            outfile << encoded_data[j] << " ";
+        }
+        outfile << std::endl;
+
+        // Deallocate the temporary encoded data
+        delete[] encoded_data;
+		
 		// lo_custkey 0: 73 73 73 73 73 73 156 246 246 246...
-		//73 6 156 1 246 6 273 1 88 3 111 1 78 7 261 6 133 4 123 3 255 6 231 1 172 3 249 1 163 6 64 1 33 3...
+		// Stored encoded data for row 0: 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7 261 6 133 4 123 3 255 6 231 1 172 3 249 1 163 6 64 1 33 3 ...
 		}
+	
+	// Close the file
+    outfile.close();
 
 	printf("Encoding data finished!\n");
 	fin.close();
+	
 
 }
 

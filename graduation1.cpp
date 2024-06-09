@@ -311,10 +311,10 @@ int main(int argc, char* argv[])
 		}//block
 	}//for
 
-	for (int i = 0; i < 9; i++) {
-		memset(LOTable.pLOTable[i], 0, N_TUPLE * sizeof(int));
-		free(LOTable.pLOTable[i]);
-	}
+	// for (int i = 0; i < 9; i++) {
+	// 	memset(LOTable.pLOTable[i], 0, N_TUPLE * sizeof(int));
+	// 	free(LOTable.pLOTable[i]);
+	// }
 
     sysCatalog.clear( );
 
