@@ -4,4 +4,4 @@
 
 int* run_length_encode(const int* data, size_t size, size_t& encoded_size_each_row);
 
-int run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_t col_index);
+std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_t col_index);
