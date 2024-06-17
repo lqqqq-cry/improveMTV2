@@ -9,6 +9,7 @@
 #include  <boost/foreach.hpp>
 #include  "boost/bimap.hpp"
 #include  <iostream>
+#include  <fstream>
 #include  <algorithm>
 #include  <vector>
 #include  <iostream>
@@ -937,14 +938,14 @@ producePrediction(ddtacontext &context, SQLHDBC& dbc)
 
 						     prediction.push_back(counter); //push back key into the key vecotor;
 
-						     cout << "szData: " << szData << " counter: " << counter << endl;
+						     //cout << "szData: " << szData << " counter: " << counter << endl;
 						     counter++;
 						}else {//already in the map
 
 						     prediction.push_back(iter->second); //get the key of the attribute; iter->second is key
 
 							 //test: print triplet
-						     cout << "<key,value>: <" << iter->first << "," << iter->second << ">" << endl;
+						     //cout << "<key,value>: <" << iter->first << "," << iter->second << ">" << endl;
 						}
 
 					 }//end while
@@ -1072,15 +1073,32 @@ void *exec_cddta_thread(void * arg){
 
     memset(fKey, -1, sizeof(fKey));
 
+	// Open a file to save the encoded data
+    // std::ofstream outfile("exec_ddta_RLE.txt");
+
 	for (size_t i = mt_arg-> fact_start; i <= mt_arg-> fact_end; i++) {
 
               flag = true;
 
 			  //@town: 先判断事实表的过滤条件
-			  /*
-			  if (query < 3) {
-					lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
-					lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
+			  
+			  if (query >= 0 && query < 3) {
+					// lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
+					// Write encoded data to the file
+					// outfile << "i: " << i << endl;
+					// outfile << "(mt_arg->pFactTable)->pLOTable[6][i]: " << (mt_arg->pFactTable)->pLOTable[6][0] << endl;
+					std::pair<int, int> value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[6], (mt_arg->pFactTable)->pLOTable[6][0], i);		//拿到外键，对应维表位图或键值对的下标
+					lo_discount = value_count0.first; //value
+					// outfile << "lo_discount: " << lo_discount << endl;
+					
+					// lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
+					// Write encoded data to the file
+					// outfile << "i: " << i << endl;
+					// outfile << "(mt_arg->pFactTable)->pLOTable[4][i]: " << (mt_arg->pFactTable)->pLOTable[4][0] << endl;
+					value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[4], (mt_arg->pFactTable)->pLOTable[4][0], i);		//拿到外键，对应维表位图或键值对的下标
+					lo_quantity = value_count0.first; //value
+					// outfile << "lo_quantity: " << lo_quantity << endl;
+
 
 					switch ((mt_arg->pRTInfoPtr)->nFilter)
 					{
@@ -1104,16 +1122,21 @@ void *exec_cddta_thread(void * arg){
 							break;
 					}
 			  }
-			*/	
-			 
+			
+			  std::pair<int, int> value_count = std::make_pair(0, 0);
 			  //get foreign key in fact table and judge
 			  for(k = 0;  attrsToGet[k] < 4; k++) {
 
 				  int myOrder = rearrange(attrsToGet[k]);
 
 				  //fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
-				  fKey[myOrder] = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);		//拿到外键，对应维表位图或键值对的下标
-
+				  // Write encoded data to the file
+				//   outfile << "attrsToGet[k],i: " << attrsToGet[k] << "," << i << endl;
+				//   outfile << "(mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0]: " << (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] <<endl;
+				  value_count = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);		//拿到外键，对应维表位图或键值对的下标
+				  fKey[myOrder] = value_count.first; //value
+				//   outfile << "fKey[myOrder]: " << fKey[myOrder] << endl;
+				  
 				  flag = predJudge(*mt_arg->contextptr, fKey[myOrder], attrsToGet[k]);
 
 				  if(!flag) break;
@@ -1152,10 +1175,12 @@ void *exec_cddta_thread(void * arg){
 			  //now, get fact table value for aggregation
 			  if(opType != NONE) {
 			 		//  f1 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
-					 f1 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+					std::pair<int, int> value_count1 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+					f1 = value_count1.first;
 			 		//  f2 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][i];
-					 f2 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0], i);
-			 		 
+					std::pair<int, int> value_count2 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0], i);
+			 		f2 = value_count2.first;
+					// outfile << "k,i,f1,f2: " << k << "," << i << "," << f1 << "," << f2 << endl; 
 
 			 		// printf(">>%d >>%d \n", f1, f2);
 
@@ -1171,7 +1196,9 @@ void *exec_cddta_thread(void * arg){
 
 			  }else {
 			 		//  factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
-					factValue = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+					std::pair<int, int> value_count3 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
+					factValue = value_count3.first;
+					// outfile << "k,i,factValue: " << k << "," << i << "," << factValue << endl;
 			 		
 			  }
 			  nInGrp++;
@@ -1192,8 +1219,11 @@ void *exec_cddta_thread(void * arg){
 
 		      totalCnt += (endCnt - startCnt);
 
-	}
+			  i = i + value_count.second - 1; //value_count.second: the number of same values in fact table, - 1: i will plus one after currnet loop
+			  //cout << "Test if build correctly!" << endl;
 
+	}// end for
+	// outfile.close();
 	//cout << "the tuple enter into GROUP BY is: " << nInGrp << endl;
 	//cout << "the time used in group by is: " << totalCnt / (2.4 * 1000 * 1000) << endl;
 	return NULL;
