@@ -564,7 +564,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
    char line[512];
 
-   fin.open("/home/lia/Downloads/ssb-dbgen/lineorder.tbl");   //loading lineorder table
+   fin.open("/home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl");   //loading lineorder table
 
     if(!fin)
 		cout <<"Can't open data file ";
@@ -676,7 +676,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 	printf("Encoding data (RLE)...Now the lineorder table has %d attributes\n", pos);
 
 	// Open a file to save the encoded data
-    std::ofstream outfile("encoded_data.txt");
+    // std::ofstream outfile("encoded_data.txt");
 
     // Process each row of LOTable.pLOTable using run_length_encode
     for (size_t i = 0; i < pos+1; ++i) {
@@ -692,11 +692,11 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
         std::copy(encoded_data, encoded_data + encoded_size_each_row, LOTable.pLOTable[i]);
                 
 		// Write encoded data to the file
-        outfile << "Stored encoded data for row " << i << ": ";
-        for (size_t j = 0; j < encoded_size_each_row + 1; ++j) {
-            outfile << encoded_data[j] << " ";
-        }
-        outfile << std::endl;
+        // outfile << "Stored encoded data for row " << i << ": ";
+        // for (size_t j = 0; j < encoded_size_each_row + 1; ++j) {
+        //     outfile << encoded_data[j] << " ";
+        // }
+        // outfile << std::endl;
 
         // Deallocate the temporary encoded data
         delete[] encoded_data;
@@ -706,7 +706,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 		}
 	
 	// Close the file
-    outfile.close();
+    // outfile.close();
 
 	printf("Encoding data finished!\n");
 	fin.close();

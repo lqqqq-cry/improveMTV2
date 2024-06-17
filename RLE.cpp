@@ -41,10 +41,10 @@ int* run_length_encode(const int* data, size_t size, size_t& encoded_size_each_r
 
 // Function to decode the encoded data at a specific row and column index
 // store by column, so row_index->column attributes, col_index->row records
-int run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_t col_index) {
+std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_t col_index) {
     // Check if the encoded data is empty
     if (encoded_size == 0) {
-        return 0; // Return 0 if the encoded data is empty
+        return std::make_pair(0, 0); // Return 0 if the encoded data is empty
     }
 
     // Check if the column index is within bounds
@@ -53,11 +53,12 @@ int run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_
         total_size += stored_encoded_data[i];
     }
     if (col_index >= total_size) {
-        return 0; // Return 0 if column index is out of bounds
+        return std::make_pair(0, 0); // Return 0 if column index is out of bounds
     }
 
     // Allocate memory for the decoded data
     int decoded_data = 0; // Initialize decoded_data with dummy value
+    int decoded_count = 0; // Return the number of decoded_data to the calling place
     size_t current_index = 0;
 
     // Traverse the encoded data to find the value at the specified column index
@@ -68,13 +69,14 @@ int run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_
         // Check if the column index falls within the range of this value
         if (col_index < current_index + count) {
             decoded_data = value; // Set the decoded value
+            decoded_count = count;
             break; // Exit the loop
         }
 
         current_index += count; // Move to the next value
     }
 
-    return decoded_data; // Return the decoded data
+    return std::make_pair(decoded_data,decoded_count); // Return the decoded data
 }
 // int run_length_decode(const std::vector<std::vector<int>>& stored_encoded_data, size_t row_index, size_t col_index) {
 //     // Check if the row index is within bounds
