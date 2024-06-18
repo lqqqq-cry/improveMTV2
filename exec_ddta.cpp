@@ -9,6 +9,7 @@
 #include  <boost/foreach.hpp>
 #include  "boost/bimap.hpp"
 #include  <iostream>
+#include  <fstream>
 #include  <algorithm>
 #include  <vector>
 #include  <iostream>
@@ -935,14 +936,14 @@ producePrediction(ddtacontext &context, SQLHDBC& dbc)
 
 						     prediction.push_back(counter); //push back key into the key vecotor;
 
-						     cout << "szData: " << szData << " counter: " << counter << endl;
+						     //cout << "szData: " << szData << " counter: " << counter << endl;
 						     counter++;
 						}else {//already in the map
 
 						     prediction.push_back(iter->second); //get the key of the attribute; iter->second is key
 
 							 //test: print triplet
-						     cout << "<key,value>: <" << iter->first << "," << iter->second << ">" << endl;
+						     //cout << "<key,value>: <" << iter->first << "," << iter->second << ">" << endl;
 						}
 
 					 }//end while
@@ -1070,6 +1071,9 @@ void *exec_cddta_thread(void * arg){
 
     memset(fKey, -1, sizeof(fKey));
 
+	// Open a file to save the encoded data
+    // std::ofstream outfile("exec_ddta.txt");
+
 	for (size_t i = mt_arg-> fact_start; i <= mt_arg-> fact_end; i++) {
 
               flag = true;
@@ -1109,7 +1113,12 @@ void *exec_cddta_thread(void * arg){
 
 				  int myOrder = rearrange(attrsToGet[k]);
 
+				  // Write encoded data to the file
+				//   outfile << "attrsToGet[k],i: " << attrsToGet[k] << "," << i << endl;
+				  
 				  fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
+
+				//   outfile << "fKey[myOrder]: " << fKey[myOrder] << endl; 
 
 				  flag = predJudge(*mt_arg->contextptr, fKey[myOrder], attrsToGet[k]);
 
@@ -1151,6 +1160,8 @@ void *exec_cddta_thread(void * arg){
 			 		 f1 = (mt_arg->pFactTable)->pLOTable[ attrsToGet[k]][i];
 			 		 f2 = (mt_arg->pFactTable)->pLOTable[ attrsToGet[k+1]][i];
 
+					//  outfile << "k,i,f1,f2: " << k << "," << i << "," << f1 << "," << f2 << endl; 
+
 			 		// printf(">>%d >>%d \n", f1, f2);
 
 			 		 switch(opType) {
@@ -1165,6 +1176,8 @@ void *exec_cddta_thread(void * arg){
 
 			  }else {
 			 		 factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+
+					//  outfile << "k,i,factValue: " << k << "," << i << "," << factValue << endl;
 			  }
 			  nInGrp++;
 			  startCnt = __rdtsc( );
@@ -1185,7 +1198,7 @@ void *exec_cddta_thread(void * arg){
 		      totalCnt += (endCnt - startCnt);
 
 	}
-
+	// outfile.close();
 	//cout << "the tuple enter into GROUP BY is: " << nInGrp << endl;
 	//cout << "the time used in group by is: " << totalCnt / (2.4 * 1000 * 1000) << endl;
 	return NULL;
