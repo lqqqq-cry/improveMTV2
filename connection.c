@@ -174,6 +174,13 @@ void GetStringFromDB (SQLHSTMT stmt, SQLCHAR* szData, int i)
 		SQLGetData(stmt, *((SQLUSMALLINT*) &i), SQL_C_DEFAULT, szData, 20,
 				(SQLLEN*)&cbLen);
 		break;
+
+	// ODBC库规定：SQL_WCHAR (-8)
+	case SQL_WCHAR: // 值为-8
+		SQLGetData(stmt, *((SQLUSMALLINT*) &i), SQL_C_DEFAULT, szData, 20,
+				(SQLLEN*)&cbLen);
+		break;
+	
 	// case SQL_WVARCHAR, updated by lq
 	// ODBC库规定：SQL_WVARCHAR (-9), Wide-character string (UTF-16 or UCS-2)
 	case SQL_WVARCHAR: //值为-9

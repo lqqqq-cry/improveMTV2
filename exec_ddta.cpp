@@ -1031,6 +1031,8 @@ inline bool predJudge(ddtacontext& context, int fKey, int tblPos )
 
 
 void *exec_cddta_thread(void * arg){
+	timer startTime, endTime;
+    startTime = timerStart( );
 
 	thread_args * mt_arg = (thread_args * )arg;
 	bool  flag, flags[4];
@@ -1107,14 +1109,18 @@ void *exec_cddta_thread(void * arg){
 			  }
 			 
 			  //get foreign key in fact table and judge
+			  timer startTime1, endTime1;
 			  for(k = 0;  attrsToGet[k] < 4; k++) {
 
 				  int myOrder = rearrange(attrsToGet[k]);
 
 				  // Write encoded data to the file
 				//   outfile << "attrsToGet[k],i: " << attrsToGet[k] << "," << i << endl;
+				  startTime1 = timerStart( );
 				  
 				  fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
+				  endTime1 = timerEnd( );
+				  cout << "Decoding data once: " << elapsedTime(startTime1, endTime1) << " ms." << std::endl;
 
 				//   outfile << "fKey[myOrder]: " << fKey[myOrder] << endl; 
 
@@ -1199,6 +1205,8 @@ void *exec_cddta_thread(void * arg){
 	// outfile.close();
 	//cout << "the tuple enter into GROUP BY is: " << nInGrp << endl;
 	//cout << "the time used in group by is: " << totalCnt / (2.4 * 1000 * 1000) << endl;
+	endTime = timerEnd( );
+	cout << "Decoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
 	return NULL;
 }
 

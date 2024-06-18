@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <fstream>
 #include <iostream>
+#include "timer.h"
 #include "exec_ddta.h"
 
 using namespace std;
@@ -548,6 +549,8 @@ inline int dataKey2Index(int dateKey)
 
 void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 {
+   timer startTime, endTime;
+   startTime = timerStart( );
    ifstream fin;
 
    short *map = runtimeInfo.posMap;
@@ -562,7 +565,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
    char line[512];
 
-   fin.open("/home/lia/Downloads/ssb-dbgen/lineorder.tbl");   //loading lineorder table
+   fin.open("/home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl");   //loading lineorder table
 
     if(!fin)
 		cout <<"Can't open data file ";
@@ -657,6 +660,8 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
     LOTable.size = count;
     printf(" size = %ld, loading data finished!\n", count);
 	fin.close();
+	endTime = timerEnd( );
+	cout << "Encoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
 
 }
 
