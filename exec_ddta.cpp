@@ -1079,8 +1079,7 @@ void *exec_cddta_thread(void * arg){
               flag = true;
 
 			  //@town: 先判断事实表的过滤条件
-			  /*
-			  if (query < 3) {
+			  if (query >= 0 && query < 3) {
 					lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
 					lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
 
@@ -1106,7 +1105,6 @@ void *exec_cddta_thread(void * arg){
 							break;
 					}
 			  }
-			*/	
 			 
 			  //get foreign key in fact table and judge
 			  for(k = 0;  attrsToGet[k] < 4; k++) {
