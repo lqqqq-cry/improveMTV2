@@ -17,3 +17,5 @@ sudo cp /home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl /var/lib/mysql
 Sign in MySQL...
 mysql: [Warning] Using a password on the command line interface can be insecure.
 End load tables into MySQL.
+
+# Dont forget modify the code `fin.open("/home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl");` to the path to the fact table in line 567 in utilities.cpp.

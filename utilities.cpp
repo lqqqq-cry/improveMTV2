@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include "exec_ddta.h"
+#include "timer.h"
 #include "RLE.h"
 
 using namespace std;
@@ -549,6 +550,8 @@ inline int dataKey2Index(int dateKey)
 
 void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 {
+   timer startTime, endTime;
+   startTime = timerStart( );
    ifstream fin;
 
    short *map = runtimeInfo.posMap;
@@ -672,9 +675,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
     LOTable.size = count;
     printf(" size = %ld, loading data finished!\n", count);
-
-	printf("Encoding data (RLE)...Now the lineorder table has %d attributes\n", pos);
-
+	
 	// Open a file to save the encoded data
     // std::ofstream outfile("encoded_data.txt");
 
@@ -707,9 +708,9 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 	
 	// Close the file
     // outfile.close();
-
-	printf("Encoding data finished!\n");
 	fin.close();
+	endTime = timerEnd( );
+	cout << "Encoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
 	
 
 }

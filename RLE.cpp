@@ -47,18 +47,16 @@ std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t enc
         return std::make_pair(0, 0); // Return 0 if the encoded data is empty
     }
 
-    // Check if the column index is within bounds
-    size_t total_size = 0;
-    for (size_t i = 2; i < encoded_size; i += 2) {
-        total_size += stored_encoded_data[i];
-    }
-    if (col_index >= total_size) {
-        return std::make_pair(0, 0); // Return 0 if column index is out of bounds
-    }
+    // // Check if the column index is within bounds
+    // size_t total_size = 0;
+    // for (size_t i = 2; i < encoded_size; i += 2) {
+    //     total_size += stored_encoded_data[i];
+    // }
+    // if (col_index >= total_size) {
+    //     return std::make_pair(0, 0); // Return 0 if column index is out of bounds
+    // }
 
     // Allocate memory for the decoded data
-    int decoded_data = 0; // Initialize decoded_data with dummy value
-    int decoded_count = 0; // Return the number of decoded_data to the calling place
     size_t current_index = 0;
 
     // Traverse the encoded data to find the value at the specified column index
@@ -68,15 +66,13 @@ std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t enc
 
         // Check if the column index falls within the range of this value
         if (col_index < current_index + count) {
-            decoded_data = value; // Set the decoded value
-            decoded_count = count;
-            break; // Exit the loop
+            return std::make_pair(value, count); // Return the decoded value and count
         }
 
         current_index += count; // Move to the next value
     }
 
-    return std::make_pair(decoded_data,decoded_count); // Return the decoded data
+    return std::make_pair(0,0); // Return 0 if column index is out of bounds
 }
 // int run_length_decode(const std::vector<std::vector<int>>& stored_encoded_data, size_t row_index, size_t col_index) {
 //     // Check if the row index is within bounds
