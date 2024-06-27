@@ -679,6 +679,8 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 	// Open a file to save the encoded data
     // std::ofstream outfile("encoded_data.txt");
 
+	std::ofstream outfile("ut_pLOTable.txt");
+
     // Process each row of LOTable.pLOTable using run_length_encode
     for (size_t i = 0; i < pos+1; ++i) {
         size_t encoded_size_each_row = count_each_row[i];
@@ -701,13 +703,20 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
         // Deallocate the temporary encoded data
         delete[] encoded_data;
-		
+	
 		// lo_custkey 0: 73 73 73 73 73 73 156 246 246 246...
 		// Stored encoded data for row 0: 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7 261 6 133 4 123 3 255 6 231 1 172 3 249 1 163 6 64 1 33 3 ...
 		}
-	
+	    // Printing all elements in pLOTable
+		for (int k = 0; k < 9; ++k) {
+			outfile << "Array " << k << endl;
+			for (int j = 0; j < LOTable.pLOTable[k][0]; ++j) {
+				outfile << LOTable.pLOTable[k][j] << " ";
+			}
+			outfile << endl;
+		}
 	// Close the file
-    // outfile.close();
+    outfile.close();
 	fin.close();
 	endTime = timerEnd( );
 	cout << "Encoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;

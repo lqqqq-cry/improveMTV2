@@ -6,6 +6,7 @@
   //step1_gcc -c build .c file --> step2_g++ -c build all cpp files --> g++ -o link all .o files --> debug-gdb
   "version": "0.2.0",
   "configurations": [
+    
     {
       "name": "debug-gdb",
       "type": "cppdbg",

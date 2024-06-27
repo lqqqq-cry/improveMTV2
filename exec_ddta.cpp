@@ -1084,46 +1084,46 @@ void *exec_cddta_thread(void * arg){
 
 			  //@town: 先判断事实表的过滤条件
 			  
-			  if (query >= 0 && query < 3) {
-					// lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
-					// Write encoded data to the file
-					// outfile << "i: " << i << endl;
-					// outfile << "(mt_arg->pFactTable)->pLOTable[6][i]: " << (mt_arg->pFactTable)->pLOTable[6][0] << endl;
-					std::pair<int, int> value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[6], (mt_arg->pFactTable)->pLOTable[6][0], i);		//拿到外键，对应维表位图或键值对的下标
-					lo_discount = value_count0.first; //value
-					// outfile << "lo_discount: " << lo_discount << endl;
+			//   if (query >= 0 && query < 3) {
+			// 		// lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
+			// 		// Write encoded data to the file
+			// 		// outfile << "i: " << i << endl;
+			// 		// outfile << "(mt_arg->pFactTable)->pLOTable[6][i]: " << (mt_arg->pFactTable)->pLOTable[6][0] << endl;
+			// 		std::pair<int, int> value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[6], (mt_arg->pFactTable)->pLOTable[6][0], i);		//拿到外键，对应维表位图或键值对的下标
+			// 		lo_discount = value_count0.first; //value
+			// 		// outfile << "lo_discount: " << lo_discount << endl;
 					
-					// lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
-					// Write encoded data to the file
-					// outfile << "i: " << i << endl;
-					// outfile << "(mt_arg->pFactTable)->pLOTable[4][i]: " << (mt_arg->pFactTable)->pLOTable[4][0] << endl;
-					value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[4], (mt_arg->pFactTable)->pLOTable[4][0], i);		//拿到外键，对应维表位图或键值对的下标
-					lo_quantity = value_count0.first; //value
-					// outfile << "lo_quantity: " << lo_quantity << endl;
+			// 		// lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
+			// 		// Write encoded data to the file
+			// 		// outfile << "i: " << i << endl;
+			// 		// outfile << "(mt_arg->pFactTable)->pLOTable[4][i]: " << (mt_arg->pFactTable)->pLOTable[4][0] << endl;
+			// 		value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[4], (mt_arg->pFactTable)->pLOTable[4][0], i);		//拿到外键，对应维表位图或键值对的下标
+			// 		lo_quantity = value_count0.first; //value
+			// 		// outfile << "lo_quantity: " << lo_quantity << endl;
 
 
-					switch ((mt_arg->pRTInfoPtr)->nFilter)
-					{
-					case 3:
-							if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
-								lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
-								lo_quantity < (mt_arg->pRTInfoPtr)->filter[2])
-								flag = true;
-							else continue;
+			// 		switch ((mt_arg->pRTInfoPtr)->nFilter)
+			// 		{
+			// 		case 3:
+			// 				if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
+			// 					lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
+			// 					lo_quantity < (mt_arg->pRTInfoPtr)->filter[2])
+			// 					flag = true;
+			// 				else continue;
 
-							break;
+			// 				break;
 
-					case 4:
-							if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
-								lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
-								lo_quantity >= (mt_arg->pRTInfoPtr)->filter[2] &&
-								lo_quantity <= (mt_arg->pRTInfoPtr)->filter[3])
-								flag = true;
-							else continue;
+			// 		case 4:
+			// 				if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
+			// 					lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
+			// 					lo_quantity >= (mt_arg->pRTInfoPtr)->filter[2] &&
+			// 					lo_quantity <= (mt_arg->pRTInfoPtr)->filter[3])
+			// 					flag = true;
+			// 				else continue;
 
-							break;
-					}
-			  }
+			// 				break;
+			// 		}
+			//   }
 			
 			  std::pair<int, int> value_count = std::make_pair(0, 0);
 			  //get foreign key in fact table and judge
@@ -1139,7 +1139,7 @@ void *exec_cddta_thread(void * arg){
 				  value_count = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);		//拿到外键，对应维表位图或键值对的下标
 				  fKey[myOrder] = value_count.first; //value
 				  endTime1 = timerEnd( );
-				  cout << "Decoding data once: " << elapsedTime(startTime1, endTime1) << " ms." << std::endl;
+				//   cout << "Decoding data once: " << elapsedTime(startTime1, endTime1) << " ms." << std::endl;
 				//   outfile << "fKey[myOrder]: " << fKey[myOrder] << endl;
 				  
 				  flag = predJudge(*mt_arg->contextptr, fKey[myOrder], attrsToGet[k]);
@@ -1338,7 +1338,7 @@ void exec_cddta_mt(ddtacontext& context, SelectType& selectVar,
 	// __pthread_kill_implementation (no_tid=0, signo=6, threadid=140737352230720) at ./nptl/pthread_kill.c:44
 	// cout << "sysconf(_SC_NPROCESSORS_ONLN)" << sysconf(_SC_NPROCESSORS_ONLN) << std::endl;
 	// Therefore change the below code from sysconf(_SC_NPROCESSORS_ONLN) - 7 to sysconf(_SC_NPROCESSORS_ONLN) - 3
-	int THREAD_NUM = sysconf(_SC_NPROCESSORS_ONLN);
+	int THREAD_NUM = sysconf(_SC_NPROCESSORS_ONLN) - 3;
 
 	std::vector<thread_args> threads(THREAD_NUM);	//@town: [add] "(THREAD_NUM)"，用于初始化threads向量
 
