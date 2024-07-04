@@ -29,14 +29,28 @@ int* run_length_encode(const int* data, size_t size, size_t& encoded_size_each_r
     encoded_data.push_back(data[size - 1]);
     encoded_data.push_back(count);
     n = n + 2;
-    
-    // Allocate memory for the encoded data to return
-    encoded_size_each_row = encoded_data.size() + 1; // +1: n need to be stored in result
-    int* result = new int[encoded_size_each_row];
-    result[0] = n;
-    std::copy(encoded_data.begin(), encoded_data.end(), result + 1);
 
-    return result; // Return the encoded result array
+    if (n < size) // 如果压缩后的数据大小小于未压缩的数据大小则编码
+    {
+        // Allocate memory for the encoded data to return
+        encoded_size_each_row = encoded_data.size() + 1; // +1: n need to be stored in result
+        int* result = new int[encoded_size_each_row];
+        result[0] = n;
+        std::copy(encoded_data.begin(), encoded_data.end(), result + 1);
+        return result; // Return the encoded result array
+    }
+    else{
+        // Allocate new array with one extra element
+		int* newArray = new int[size + 1];
+
+		// Insert the new element at the beginning
+		newArray[0] = size;
+
+		// Copy old elements to new array starting from the second position
+		std::copy(data, data + size, newArray + 1);
+		return newArray;
+    }
+
 }
 
 // Function to decode the encoded data at a specific row and column index
@@ -57,14 +71,14 @@ std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t enc
     // }
 
     // Allocate memory for the decoded data
-    size_t current_index = 0;
+    size_t current_index = 1;
 
     // Traverse the encoded data to find the value at the specified column index
-    for (size_t i = 1; i < encoded_size; i += 2) {
+    for (size_t i = 1; i < encoded_size; i += 2) { // 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7
         int value = stored_encoded_data[i];
         int count = stored_encoded_data[i + 1];
 
-        // Check if the column index falls within the range of this value
+        // Check if the column index falls within the range of this value // col_index = 4 (index 3 in fact)
         if (col_index < current_index + count) {
             return std::make_pair(value, count); // Return the decoded value and count
         }

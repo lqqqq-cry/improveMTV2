@@ -1033,8 +1033,8 @@ inline bool predJudge(ddtacontext& context, int fKey, int tblPos )
 
 
 void *exec_cddta_thread(void * arg){
-	timer startTime, endTime;
-    startTime = timerStart( );
+	// timer startTime, endTime;
+    // startTime = timerStart( );
 
 	thread_args * mt_arg = (thread_args * )arg;
 	bool  flag, flags[4];
@@ -1084,70 +1084,93 @@ void *exec_cddta_thread(void * arg){
 
 			  //@town: 先判断事实表的过滤条件
 			  
-			//   if (query >= 0 && query < 3) {
-			// 		// lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
-			// 		// Write encoded data to the file
-			// 		// outfile << "i: " << i << endl;
-			// 		// outfile << "(mt_arg->pFactTable)->pLOTable[6][i]: " << (mt_arg->pFactTable)->pLOTable[6][0] << endl;
-			// 		std::pair<int, int> value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[6], (mt_arg->pFactTable)->pLOTable[6][0], i);		//拿到外键，对应维表位图或键值对的下标
-			// 		lo_discount = value_count0.first; //value
-			// 		// outfile << "lo_discount: " << lo_discount << endl;
+			  if (query >= 0 && query < 3) {
+					// 
+					// Write encoded data to the file
+					// outfile << "i: " << i << endl;
+					// outfile << "(mt_arg->pFactTable)->pLOTable[6][i]: " << (mt_arg->pFactTable)->pLOTable[6][0] << endl;
+					if ((mt_arg->pFactTable)->pLOTable[attrsToGet[6]][0] < (mt_arg->pFactTable)->size)
+					{
+						std::pair<int, int> value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[6], (mt_arg->pFactTable)->pLOTable[6][0], i+1);		//拿到外键，对应维表位图或键值对的下标
+						lo_discount = value_count0.first; //value
+						value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[4], (mt_arg->pFactTable)->pLOTable[4][0], i+1);		//拿到外键，对应维表位图或键值对的下标
+						lo_quantity = value_count0.first; //value
+					}
+					else{
+						// lo_discount = (mt_arg->pFactTable)->pLOTable[6][i];
+						lo_discount = (mt_arg->pFactTable)->pLOTable[6][i+1];
+						lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i+1];
+					}	
 					
-			// 		// lo_quantity = (mt_arg->pFactTable)->pLOTable[4][i];
-			// 		// Write encoded data to the file
-			// 		// outfile << "i: " << i << endl;
-			// 		// outfile << "(mt_arg->pFactTable)->pLOTable[4][i]: " << (mt_arg->pFactTable)->pLOTable[4][0] << endl;
-			// 		value_count0 = run_length_decode((mt_arg->pFactTable)->pLOTable[4], (mt_arg->pFactTable)->pLOTable[4][0], i);		//拿到外键，对应维表位图或键值对的下标
-			// 		lo_quantity = value_count0.first; //value
-			// 		// outfile << "lo_quantity: " << lo_quantity << endl;
+					// outfile << "lo_discount: " << lo_discount << endl;
+					
+
+					// Write encoded data to the file
+					// outfile << "i: " << i << endl;
+					// outfile << "(mt_arg->pFactTable)->pLOTable[4][i]: " << (mt_arg->pFactTable)->pLOTable[4][0] << endl;
+					// outfile << "lo_quantity: " << lo_quantity << endl;
 
 
-			// 		switch ((mt_arg->pRTInfoPtr)->nFilter)
-			// 		{
-			// 		case 3:
-			// 				if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
-			// 					lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
-			// 					lo_quantity < (mt_arg->pRTInfoPtr)->filter[2])
-			// 					flag = true;
-			// 				else continue;
+					switch ((mt_arg->pRTInfoPtr)->nFilter)
+					{
+					case 3:
+							if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
+								lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
+								lo_quantity < (mt_arg->pRTInfoPtr)->filter[2])
+								flag = true;
+							else continue;
 
-			// 				break;
+							break;
 
-			// 		case 4:
-			// 				if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
-			// 					lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
-			// 					lo_quantity >= (mt_arg->pRTInfoPtr)->filter[2] &&
-			// 					lo_quantity <= (mt_arg->pRTInfoPtr)->filter[3])
-			// 					flag = true;
-			// 				else continue;
+					case 4:
+							if (lo_discount >= (mt_arg->pRTInfoPtr)->filter[0] &&
+								lo_discount <= (mt_arg->pRTInfoPtr)->filter[1] &&
+								lo_quantity >= (mt_arg->pRTInfoPtr)->filter[2] &&
+								lo_quantity <= (mt_arg->pRTInfoPtr)->filter[3])
+								flag = true;
+							else continue;
 
-			// 				break;
-			// 		}
-			//   }
+							break;
+					}
+			  }
 			
 			  std::pair<int, int> value_count = std::make_pair(0, 0);
 			  //get foreign key in fact table and judge
-			  timer startTime1, endTime1;
+			//   timer startTime1, endTime1;
 			  for(k = 0;  attrsToGet[k] < 4; k++) {
 				  int myOrder = rearrange(attrsToGet[k]);
 
-				  //fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
-				  // Write encoded data to the file
+				  if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] < (mt_arg->pFactTable)->size) //(mt_arg->pFactTable)->size: the size of fact table
+				  {
+					// Write encoded data to the file
 				//   outfile << "attrsToGet[k],i: " << attrsToGet[k] << "," << i << endl;
 				//   outfile << "(mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0]: " << (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] <<endl;
-				  startTime1 = timerStart( );
-				  value_count = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);		//拿到外键，对应维表位图或键值对的下标
-				  fKey[myOrder] = value_count.first; //value
-				  endTime1 = timerEnd( );
+				//   startTime1 = timerStart( );
+					value_count = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i+1);		//拿到外键，对应维表位图或键值对的下标
+					fKey[myOrder] = value_count.first; //value
+				//   endTime1 = timerEnd( );
 				//   cout << "Decoding data once: " << elapsedTime(startTime1, endTime1) << " ms." << std::endl;
 				//   outfile << "fKey[myOrder]: " << fKey[myOrder] << endl;
+				  }
+				  else{
+					// fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];		//拿到外键，对应维表位图或键值对的下标
+					fKey[myOrder] = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i+1];		//拿到外键，对应维表位图或键值对的下标
+				  }
 				  
 				  flag = predJudge(*mt_arg->contextptr, fKey[myOrder], attrsToGet[k]);
 
-				  if(!flag) break;
+				  if(!flag){
+					break;
+				  }
 			  }
 
-			  if(!flag){continue;}
+			  if(!flag){
+				if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] < (mt_arg->pFactTable)->size){// (mt_arg->pFactTable)->size: the size of fact table
+					i = i + value_count.second - 1; //value_count.second: the number of same values in fact table, - 1: i will plus one after currnet loop
+					}
+				
+				continue;
+				}
 
 			  //@town: 后判断事实表过滤条件
 			  /*if (query < 3) {
@@ -1179,12 +1202,24 @@ void *exec_cddta_thread(void * arg){
 
 			  //now, get fact table value for aggregation
 			  if(opType != NONE) {
-			 		//  f1 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
-					std::pair<int, int> value_count1 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
-					f1 = value_count1.first;
-			 		//  f2 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][i];
-					std::pair<int, int> value_count2 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0], i);
-			 		f2 = value_count2.first;
+					if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] < (mt_arg->pFactTable)->size)
+					{
+						std::pair<int, int> value_count1 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i+1);
+						f1 = value_count1.first;
+					}
+					else{
+						// f1 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+						f1 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i+1];
+					}	
+					if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0] < (mt_arg->pFactTable)->size)
+					{
+						std::pair<int, int> value_count2 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][0], i+1);
+			 			f2 = value_count2.first;
+					}
+					else{
+						// f2 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][i];
+						f2 = (mt_arg->pFactTable)->pLOTable[attrsToGet[k+1]][i+1];						
+					}			 		
 					// outfile << "k,i,f1,f2: " << k << "," << i << "," << f1 << "," << f2 << endl; 
 
 			 		// printf(">>%d >>%d \n", f1, f2);
@@ -1200,9 +1235,15 @@ void *exec_cddta_thread(void * arg){
 			 		  }
 
 			  }else {
-			 		//  factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
-					std::pair<int, int> value_count3 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i);
-					factValue = value_count3.first;
+					if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] < (mt_arg->pFactTable)->size)
+					{
+						std::pair<int, int> value_count3 = run_length_decode((mt_arg->pFactTable)->pLOTable[attrsToGet[k]], (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0], i+1);
+						factValue = value_count3.first;
+					}
+					else{
+						// factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i];
+						factValue = (mt_arg->pFactTable)->pLOTable[attrsToGet[k]][i+1];						
+					}	
 					// outfile << "k,i,factValue: " << k << "," << i << "," << factValue << endl;
 			 		
 			  }
@@ -1224,15 +1265,17 @@ void *exec_cddta_thread(void * arg){
 
 		      totalCnt += (endCnt - startCnt);
 
+			  if ((mt_arg->pFactTable)->pLOTable[attrsToGet[k]][0] < (mt_arg->pFactTable)->size){// (mt_arg->pFactTable)->size: the size of fact table
 			  i = i + value_count.second - 1; //value_count.second: the number of same values in fact table, - 1: i will plus one after currnet loop
+			  }				
 			  //cout << "Test if build correctly!" << endl;
 
 	}// end for
 	// outfile.close();
 	//cout << "the tuple enter into GROUP BY is: " << nInGrp << endl;
 	//cout << "the time used in group by is: " << totalCnt / (2.4 * 1000 * 1000) << endl;
-	endTime = timerEnd( );
-	cout << "Decoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
+	// endTime = timerEnd( );
+	// std::cout << "Decoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
 	return NULL;
 }
 
@@ -1370,7 +1413,7 @@ void exec_cddta_mt(ddtacontext& context, SelectType& selectVar,
 
 		if (ret!=0){
 
-			cout << "thread create error!" << std::endl;
+			std::cout << "thread create error!" << std::endl;
 		}
 	}
 

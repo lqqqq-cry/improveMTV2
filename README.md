@@ -3,7 +3,7 @@
 # How to generate data files?
 ## Run generate.sh
 - Use this command: `sudo [Path_to_generate.sh] [SF] [Path_to_the_dir_of_data_files]`
-- For example: `sudo ./generate.sh 0.05 ~/Downloads/improveMTV2/data/SF0.01`
+- For example: `sudo ./generate.sh 0.01 ~/Downloads/improveMTV2/data/SF0.01`
 - Output:
 several output until "End generate files."
 
@@ -16,6 +16,12 @@ Copy SSB tables to MySQL secure folder /var/lib/mysql-files/.
 sudo cp /home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl /var/lib/mysql-files/lineorder.tbl
 Sign in MySQL...
 mysql: [Warning] Using a password on the command line interface can be insecure.
+[There is the result of Q4.1. For example:
+d_year  c_nation        profit
+1992    ARGENTINA       13414562.00
+1992    CANADA  24968543.00
+1992    PERU    7275540.00
+]
 End load tables into MySQL.
 
 # Dont forget modify the code `fin.open("/home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl");` to the path to the fact table in line 567 in utilities.cpp.

@@ -567,7 +567,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
    char line[512];
 
-   fin.open("/home/lia/Downloads/improveMTV2/data/SF0.01/lineorder.tbl");   //loading lineorder table
+   fin.open("/home/lia/Downloads/improveMTV2/data/SF0.05/lineorder.tbl");   //loading lineorder table
 
     if(!fin)
 		cout <<"Can't open data file ";
@@ -679,7 +679,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 	// Open a file to save the encoded data
     // std::ofstream outfile("encoded_data.txt");
 
-	std::ofstream outfile("ut_pLOTable.txt");
+	// std::ofstream outfile("ut_pLOTable.txt");
 
     // Process each row of LOTable.pLOTable using run_length_encode
     for (size_t i = 0; i < pos+1; ++i) {
@@ -687,12 +687,13 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
         int *encoded_data = run_length_encode(LOTable.pLOTable[i], LOTable.size, encoded_size_each_row);
 
 		// Deallocate old data
-        delete[] LOTable.pLOTable[i];
+		delete[] LOTable.pLOTable[i];
 
 		// Store encoded data
 		encoded_size_each_row = encoded_data[0]; // the first element of encoded_data is the size of encoded_data
-        LOTable.pLOTable[i] = new int[encoded_size_each_row];
-        std::copy(encoded_data, encoded_data + encoded_size_each_row, LOTable.pLOTable[i]);
+		LOTable.pLOTable[i] = new int[encoded_size_each_row];
+		std::copy(encoded_data, encoded_data + encoded_size_each_row, LOTable.pLOTable[i]);
+		
                 
 		// Write encoded data to the file
         // outfile << "Stored encoded data for row " << i << ": ";
@@ -708,15 +709,15 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 		// Stored encoded data for row 0: 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7 261 6 133 4 123 3 255 6 231 1 172 3 249 1 163 6 64 1 33 3 ...
 		}
 	    // Printing all elements in pLOTable
-		for (int k = 0; k < 9; ++k) {
-			outfile << "Array " << k << endl;
-			for (int j = 0; j < LOTable.pLOTable[k][0]; ++j) {
-				outfile << LOTable.pLOTable[k][j] << " ";
-			}
-			outfile << endl;
-		}
+		// for (int k = 0; k < 9; ++k) {
+		// 	outfile << "Array " << k << endl;
+		// 	for (int j = 0; j < LOTable.pLOTable[k][0]; ++j) {
+		// 		outfile << LOTable.pLOTable[k][j] << " ";
+		// 	}
+		// 	outfile << endl;
+		// }
 	// Close the file
-    outfile.close();
+    // outfile.close();
 	fin.close();
 	endTime = timerEnd( );
 	cout << "Encoding data: " << elapsedTime(startTime, endTime) << " ms." << std::endl;
