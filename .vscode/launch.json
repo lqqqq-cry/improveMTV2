@@ -32,7 +32,7 @@
           "ignoreFailures": true
         }
       ],
-      "preLaunchTask": "g++ -o link all .o files" //在调试前需要完成的任务，这里是生成可执行程序那条g++语句
+      "preLaunchTask": "gpp -o link all .o files" //在调试前需要完成的任务，这里是生成可执行程序那条g++语句
     }
   ]    
 }

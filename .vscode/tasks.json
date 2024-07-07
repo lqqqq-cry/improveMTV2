@@ -49,7 +49,7 @@
 
         {//create execute file
             "type": "cppbuild",
-            "label": "g++ -o link all .o files",
+            "label": "gpp -o link all .o files",
 
 			//"command"和"args"加起来相当于g++ connection.o exec_ddta.o graduation1.o parse.o resultSet.o rewriteSQL.o utilities.o -o graduation1 -l odbc
 			//分开来写是想按着顺序链接，但是写成"${fileDirname}/*.o",也可以
