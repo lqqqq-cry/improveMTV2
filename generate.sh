@@ -3,7 +3,7 @@ set -euo pipefail
 
 # 指定生成的表文件存储目录 （*** 输入该参数时请用绝对路径！***）
 TABLE_DIR=$2 # 命令行第2个参数
-#"~/Downloads/improveMTV2/data/SF"
+#"~/Downloads/data/SF"
 # 如果目录不存在，则创建该目录
 mkdir -p "$TABLE_DIR"
 echo "Current dir: "TABLE_DIR""
