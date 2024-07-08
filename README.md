@@ -10,7 +10,7 @@ several output until "End generate files."
 # How to load data files into MySQL?
 ## Run initializeSQL.sh
 - Use this command: `sudo [Path_to_initializeSQL.sh] [Path_to_the_dir_of_data_files]`
-- For example: `sudo ~/Downloads/initializeSQL.sh ~/Downloads/data/SF0.01`
+- For example: `sudo ./initializeSQL.sh /home/lia/Downloads/data/SF0.01`
 - Output: 
 Copy SSB tables to MySQL secure folder /var/lib/mysql-files/.
 sudo cp /home/lia/Downloads/data/SF0.01/lineorder.tbl /var/lib/mysql-files/lineorder.tbl

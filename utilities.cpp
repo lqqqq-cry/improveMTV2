@@ -567,7 +567,7 @@ void loadFactTable(TableType& LOTable, runtimeInfoType& runtimeInfo)
 
    char line[512];
 
-   fin.open("/home/lia/Downloads/data/SF0.05/lineorder.tbl");   //loading lineorder table
+   fin.open("/home/lia/Downloads/data/SF0.01/lineorder.tbl");   //loading lineorder table
 
     if(!fin)
 		cout <<"Can't open data file ";
