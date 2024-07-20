@@ -55,37 +55,30 @@ int* run_length_encode(const int* data, size_t size, size_t& encoded_size_each_r
 
 // Function to decode the encoded data at a specific row and column index
 // store by column, so row_index->column attributes, col_index->row records
-std::pair<int, int> run_length_decode(const int* stored_encoded_data, size_t encoded_size, size_t col_index) {
+std::pair<int, int> run_length_decode(const int* stored_encoded_data, int encoded_size, int col_index) {
     // // Check if the encoded data is empty
     // if (encoded_size == 0) {
     //     return std::make_pair(0, 0); // Return 0 if the encoded data is empty
     // }
 
-    // // Check if the column index is within bounds
-    // size_t total_size = 0;
-    // for (size_t i = 2; i < encoded_size; i += 2) {
-    //     total_size += stored_encoded_data[i];
-    // }
-    // if (col_index >= total_size) {
-    //     return std::make_pair(0, 0); // Return 0 if column index is out of bounds
-    // }
-
     // Allocate memory for the decoded data
-    size_t current_index = 1;
+    int current_index = 1;
 
     // Traverse the encoded data to find the value at the specified column index
-    for (size_t i = 1; i < encoded_size; i += 2) { // 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7
+    for (int i = 1; i < encoded_size; i += 2) { // 29854 73 6 156 1 246 6 273 1 88 3 111 1 78 7
         int value = stored_encoded_data[i];
         int count = stored_encoded_data[i + 1];
 
         // Check if the column index falls within the range of this value // col_index = 4 (index 3 in fact)
-        if (col_index < current_index + count) {
+        if ( col_index < (current_index + count) ) {
+            // std::cout << "col_index: " << col_index << " current_index: " << current_index << " count: " << count << std::endl;
             return std::make_pair(value, count); // Return the decoded value and count
         }
 
         current_index += count; // Move to the next value
     }
 
+    // std::cout << "0 0 from decode." << std::endl;
     return std::make_pair(0,0); // Return 0 if column index is out of bounds
 }
 // int run_length_decode(const std::vector<std::vector<int>>& stored_encoded_data, size_t row_index, size_t col_index) {

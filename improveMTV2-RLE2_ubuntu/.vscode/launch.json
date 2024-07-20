@@ -1,0 +1,38 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  
+  //step1_gcc -c build .c file --> step2_g++ -c build all cpp files --> g++ -o link all .o files --> debug-gdb
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug-gdb",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}/graduation1", //tasks.json中生成可执行文件名
+      "args": [], //可执行文件需要的参数
+      "stopAtEntry": false, //是否在main函数处停住
+      "cwd": "${fileDirname}", //进入可执行文件目录
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "miDebuggerPath": "/usr/bin/gdb", //gdb的完整路径
+      //"miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /usr/bin/gdb -q --interpreter=mi",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        },
+        {
+          "description": "Set Disassembly Flavor to Intel",
+          "text": "-gdb-set disassembly-flavor intel",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "g++ -o link all .o files" //在调试前需要完成的任务，这里是生成可执行程序那条g++语句
+    }
+  ]    
+}
+  

@@ -1,0 +1,89 @@
+{
+    //step1_gcc -c build .c file --> step2_g++ -c build all cpp files --> g++ -o link all .o files
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "step1_gcc -c build .c files", //自定义名称
+			
+			//"command"和"args"加起来相当于和gcc ../connection.c -c
+            "command": "/usr/bin/gcc", //path of compiler
+            "args": [
+            	"-g",
+                "-c",
+                "connection.c", //${fileDirname}为该文件当前文件夹
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        
+
+        {
+            "type": "cppbuild",
+            "label": "step2_g++ -c build all cpp files",
+
+			//"command"和"args"加起来相当于g++ ../*.cpp -c
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "-I",
+                "/usr/local/boost_1_82_0",
+                // "/usr/local/boost_1_82_0/boostLibraryBinary/include",
+                "*.cpp", //build all cpp files
+                "-c"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": "step1_gcc -c build .c files" //step2 depends on step1
+        },
+
+        {//create execute file
+            "type": "cppbuild",
+            "label": "g++ -o link all .o files",
+
+			//"command"和"args"加起来相当于g++ connection.o exec_ddta.o graduation1.o parse.o resultSet.o rewriteSQL.o utilities.o -o graduation1 -l odbc
+			//分开来写是想按着顺序链接，但是写成"${fileDirname}/*.o",也可以
+            "command": "/usr/bin/g++",
+            "args": [
+                "-fdiagnostics-color=always", //总是输出颜色代码
+                "-g",
+                "-I",
+                "/usr/local/boost_1_82_0",
+                // "/usr/local/boost_1_82_0/boostLibraryBinary/include",
+                // "connection.o",
+                // "exec_ddta.o",
+                // "graduation1.o",
+                // "$parse.o",
+                // "resultSet.o",
+                // "rewriteSQL.o",
+                // "utilities.o",
+                "*.o",
+                "-o",
+                "graduation1",
+                "-lodbc"                
+            ],
+            "options": {
+                "cwd": "${fileDirname}" //${fileDirname}为main函数所在目录
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "step2_g++ -c build all cpp files"
+            ]
+        }
+
+    ],
+    "version": "2.0.0"
+}

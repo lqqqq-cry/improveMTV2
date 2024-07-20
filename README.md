@@ -16,11 +16,19 @@ Copy SSB tables to MySQL secure folder /var/lib/mysql-files/.
 sudo cp /home/lia/Downloads/data/SF0.01/lineorder.tbl /var/lib/mysql-files/lineorder.tbl
 Sign in MySQL...
 mysql: [Warning] Using a password on the command line interface can be insecure.
-[There is the result of Q4.1. For example:
+[There is the result of Q4.1, SF = 0.01:
 d_year  c_nation        profit
 1992    ARGENTINA       13414562.00
 1992    CANADA  24968543.00
 1992    PERU    7275540.00
+
+There is the result of Q4.1, SF = 0.05:
+d_year  c_nation        profit
+1992    ARGENTINA       129557219.00
+1992    BRAZIL  262760159.00
+1992    CANADA  187579475.00
+1992    PERU    159070984.00
+1992    UNITED STATES   136680405.00
 ]
 End load tables into MySQL.
 
